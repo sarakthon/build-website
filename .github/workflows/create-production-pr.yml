@@ -1,0 +1,27 @@
+name: Create PR to production-branch
+
+on:                                                                                                                                                                
+    push:                                                                                                                                                            
+      branches:                                                                                                                                                      
+        - master  
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    permissions:     
+        pull-requests: write                                                                                                                                         
+        contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - name: Create PR from master to production
+        env:                                                                                                                                                       
+              GH_TOKEN: ${{ secrets.GITHUB_TOKEN }} 
+        run: |
+          gh pr create \
+            --base production \
+            --head master \
+            --title "Merge master into production" \
+            --body "Automated PR to keep production up to date with master." \
+          || echo "PR already exists or no changes" 
+
+
